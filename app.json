@@ -1,9 +1,10 @@
 {
   "expo": {
-    "name": "bullshit-game",
+    "name": "Bullshit Alpha",
     "slug": "bullshit-game",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "myapp",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -21,10 +22,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.lisandro939.bullshitgame"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1f607689-7f8e-4118-a20b-07bf61df32da"
+      }
     }
   }
 }
