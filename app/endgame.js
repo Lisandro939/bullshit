@@ -21,15 +21,15 @@ export default function EndGame() {
   return (
     <>
         <StatusBar style='light' />
-        <View className="h-[110vh] w-[100vw] flex flex-col items-center justify-center bg-[#00003d]">
-        <Text className="text-3xl mb-6 text-white">
-            El ganador es {playerWinner}
+        <View className="h-[110vh] w-[100vw] flex flex-col items-center justify-center bg-primary">
+        <Text style={{ fontFamily: 'Nunito-Light'}} className="text-3xl mb-6 text-[#fff]">
+            {playerWinner} ganó la partida
         </Text>
         <TouchableOpacity
-            onPress={() => router.push('/initgame')}
+            onPress={() => router.push('/main')}
             className="bg-[#96b3ff] px-4 py-2 rounded-md flex items-center justify-center mb-6"
         >
-            <Text className="text-black text-2xl font-semibold">
+            <Text style={{ fontFamily: 'Nunito-Bold'}} className="text-black text-2xl font-semibold">
                 Volver a jugar
             </Text>
         </TouchableOpacity>

@@ -12,7 +12,8 @@ export default function Clock() {
     const [playerChallenged, setPlayerChallenged] = useState('');
     const [playerChallenger, setPlayerChallenger] = useState('');
     const [counter, setCounter] = useState(0);
-    const [seconds, setSeconds] = useState(10);
+    const [time, setTime] = useState(10); 
+    const [seconds, setSeconds] = useState(time);
     const [running, setRunning] = useState(false);
     const [finished, setFinished] = useState(false);
     const [won, setWon] = useState(false);
@@ -28,10 +29,13 @@ export default function Clock() {
         AsyncStorage.getItem('playerChallenger').then((playerChallenger) => {
             setPlayerChallenger(playerChallenger)
         })
+        AsyncStorage.getItem('time').then((time) => {
+            setTime(parseInt(time))
+            setSeconds(parseInt(time))
+        })
         setFinished(false);
         setWon(false);
         setStarted(false);
-        setSeconds(10);
         setRunning(false);
         setCounter(0);
     }, [])
@@ -44,13 +48,13 @@ export default function Clock() {
         }, 1000);
         if (counter >= number && counter !== 0) {
             setRunning(false);
-            setSeconds(10);
+            setSeconds(time);
             setFinished(true);
             setWon(true);
         } 
         if (seconds === 0) {
             setRunning(false);
-            setSeconds(10);
+            setSeconds(time);
             setFinished(true);
             setWon(false);
         }
@@ -65,9 +69,10 @@ export default function Clock() {
 
     const resetTimerPlus = () => {
         setCounter(counter + 1);
-        setSeconds(10);
+        setSeconds(time);
     };
     const resetTimerMinus = () => {
+        if (counter === 0) return;
         setCounter(counter - 1);
     };
       
@@ -77,11 +82,13 @@ export default function Clock() {
             // If won === true delete playerChallenged from playersArray
             if (won) {
                 const newPlayersArray = playersArray.filter((player) => player !== playerChallenger);
+                if (newPlayersArray.length === 1) {
+                    router.push('/endgame')
+                }
                 await AsyncStorage.setItem('players', JSON.stringify(newPlayersArray)).then(() => {
                     router.push('/game')
                 })
             } else {
-                // If won === false delete playerChallenger from playersArray
                 const newPlayersArray = playersArray.filter((player) => player !== playerChallenged);
                 await AsyncStorage.setItem('players', JSON.stringify(newPlayersArray)).then(() => {
                     router.push('/game')
@@ -92,34 +99,36 @@ export default function Clock() {
   return (
     <>
         <StatusBar style='light' />
-        <View className="bg-[#00003d] h-[110vh] flex flex-col items-center justify-center">
+        <View className="bg-primary h-[110vh] flex flex-col items-center justify-center">
             <TouchableOpacity 
                 onPress={() => router.back()} 
                 className="bg-[#96b3ff] px-4 py-2 rounded-md absolute top-14 left-4">
-                    <Text className="text-black font-semibold">Volver</Text>
+                    <Text 
+                    style={{ fontFamily: 'Nunito-Bold'}}
+                    className="text-black font-semibold">Volver</Text>
                 </TouchableOpacity>
-            <Text className="text-6xl pb-6 text-white text-center">{playerChallenged}</Text>
+            <Text style={{ fontFamily: 'Nunito-Light'}} className="text-4xl pb-6 text-[#fff] text-center">{playerChallenged}</Text>
             {
-                !finished && <Text className="text-white text-2xl mb-8">Tiene que decir {number}</Text>
+                !finished && <Text style={{ fontFamily: 'Nunito-Light'}} className="text-[#fff] text-2xl mb-8">Tiene que decir {number}</Text>
             }
             
             {
-                !finished && <Text className="text-5xl text-white mb-8">{counter}</Text>
+                !finished && <Text className="text-5xl text-purple mb-8">{counter}</Text>
             }
             {
-                !finished && <Text className="text-9xl text-white">{seconds}s</Text>
+                !finished && <Text className="text-9xl text-[#fff]">{seconds}s</Text>
             }
             {
                 finished && won ?
                 <View className="flex flex-col">
-                    <Text className="text-2xl text-center text-white mb-4">¡Ganó!</Text>
-                    <Text className="text-white text-lg mb-8"> El jugador {playerChallenger} queda eliminado</Text>
+                    <Text style={{ fontFamily: 'Nunito-Light'}} className="text-2xl text-center text-[#fff] mb-4">¡Ganó!</Text>
+                    <Text style={{ fontFamily: 'Nunito-Light'}} className="text-[#fff] text-lg mb-8"> El jugador {playerChallenger} queda eliminado</Text>
                 </View>
                 :
                 finished && !won &&
                 <View className="flex flex-col">
-                    <Text className="text-2xl text-center text-white mb-4">Perdió :(</Text>
-                    <Text className="text-white text-lg mb-8"> El jugador {playerChallenged} queda eliminado</Text>
+                    <Text style={{ fontFamily: 'Nunito-Light'}} className="text-2xl text-center text-[#fff] mb-4">Perdió :(</Text>
+                    <Text style={{ fontFamily: 'Nunito-Light'}} className="text-[#fff] text-lg mb-8"> El jugador {playerChallenged} queda eliminado</Text>
                 </View>
             }
             {
@@ -127,33 +136,33 @@ export default function Clock() {
                 <TouchableHighlight 
                 onPress={startTimer}
                 className="bg-[#96b3ff] border border-[#96b3ff] rounded-lg h-16 flex items-center justify-center">
-                    <Text className="text-center px-4 py-2 text-4xl text-black font-semibold">Empezar</Text>
+                    <Text style={{ fontFamily: 'Nunito-Bold'}} className="text-center px-4 py-2 text-4xl">Empezar</Text>
                 </TouchableHighlight>
             }
             <View className="flex flex-row items-center justify-center gap-4">
                 {
                     (!finished && started && running) &&
-                    <TouchableHighlight
+                    <TouchableOpacity
                     onPress={resetTimerMinus}
-                    className="bg-red-400 border border-red-400 h-16 w-16 rounded-lg flex items-center justify-center">
-                        <Text className="text-center px-4 py-4 text-2xl text-black font-semibold">-1</Text>
-                    </TouchableHighlight>
+                    className="bg-[#ff0000] h-16 w-16 rounded-lg flex items-center justify-center">
+                        <Text style={{ fontFamily: 'Nunito-Bold'}} className="text-center px-4 py-4 text-2xl text-black font-semibold">-1</Text>
+                    </TouchableOpacity>
                 }  
                 {
                     (!finished && started && running) &&
-                    <TouchableHighlight
+                    <TouchableOpacity
                     onPress={resetTimerPlus}
-                    className="bg-green-400 border border-green-400 rounded-lg h-28 w-28 flex items-center justify-center">
-                        <Text className="text-center px-4 py-4 text-6xl text-black font-semibold">+1</Text>
-                    </TouchableHighlight>
+                    className="bg-[#3BB143] rounded-lg h-28 w-28 flex items-center justify-center">
+                        <Text style={{ fontFamily: 'Nunito-Bold'}} className="text-center px-4 py-8 text-6xl">+1</Text>
+                    </TouchableOpacity>
                 }
             </View>
             {
                 finished &&
                 <TouchableHighlight
                 onPress={keepPlaying}
-                className="bg-[#96b3ff] border border-[#96b3ff] rounded-lg h-16 flex items-center justify-center">
-                    <Text className="text-center px-4 py-2 text-4xl text-black font-semibold">Siguiente</Text>
+                className="bg-[#96b3ff] border border-[#96b3ff] rounded-lg h-16 flex items-center justify-center mt-6">
+                    <Text style={{ fontFamily: 'Nunito-Bold'}} className="text-center px-4 py-2 text-4xl">Siguiente</Text>
                 </TouchableHighlight>
             }
         </View>
