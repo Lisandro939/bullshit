@@ -1,7 +1,1 @@
-npm cache clean --force
-
-npm install
-
-npm audit fix --force
-
-eas build -p android --profile preview
+Download APK [here](https://www.upload-apk.com/oCxh1E7ksZIYzlt)
